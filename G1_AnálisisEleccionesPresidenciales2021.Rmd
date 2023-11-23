@@ -1,0 +1,894 @@
+---
+title: "Análisis de las elecciones presidenciales del 2021 en Perú"
+author: "G1_AnalisisElectoral"
+date: "03 de septiembre del 2023"
+output:
+  html_document:
+    theme: cerulean
+    toc: yes
+  pdf_document:
+    toc: yes
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{r}
+library(dplyr)
+```
+
+
+**Integrantes**
+
+| Nombre              | Código    |
+|---------------------|-----------|
+| Epiquien, Bihonda   | 202110103 |
+| Hermitaño, Almendra | 202120258 |
+| Medrano, Paolo      | 202210206 |
+| Villon, Fátima      | 202210374 |
+
+# **I. Relevancia del estudio**
+
+Las elecciones presidenciales del 2021 en Perú fueron un evento de gran
+relevancia en la historia política del país. En este análisis, se
+examinarán diversos aspectos que marcaron este proceso electoral,
+incluyendo el resultado inesperado, la polarización política, la
+participación ciudadana y las controversias y desafíos que surgieron
+durante el periodo electoral.A continuación, se presenta una
+justificación detallada de la relevancia de este tema con ayuda de los
+puntos mencionado anteriormente:
+
+### Resultado Inesperado
+
+La victoria inesperada de Pedro Castillo, un candidato relativamente
+desconocido, plantea interrogantes fundamentales sobre las preferencias
+políticas del pueblo peruano y la complejidad de la dinámica electoral
+en el país. Este resultado desafiante, que contradice encuestas y
+expectativas, nos invita a examinar a fondo las razones detrás de este
+fenómeno, proporcionando valiosa información sobre el estado de la
+política peruana en ese momento [Fuente 1].
+
+### Polarización Política
+
+El proceso electoral estuvo marcado por una intensa polarización entre
+los candidatos Pedro Castillo y Keiko Fujimori. Representando ideologías
+opuestas, generaron tensiones y divisiones en la sociedad peruana. La
+comprensión de esta polarización es crucial para analizar la dinámica
+política en Perú y su impacto en la estabilidad y cohesión social
+[Fuente 2].
+
+### Participación Ciudadana
+
+Un aspecto llamativo de estas elecciones fue la disminución de la
+participación de votantes en comparación con años anteriores. Esta
+reducción en el número de votantes refleja cambios significativos en la
+dinámica electoral y en el interés de la ciudadanía por el proceso
+político. Investigar las razones detrás de esta disminución es esencial
+para comprender cómo los eventos y los candidatos pueden influir en la
+participación electoral, lo que a su vez impacta en la legitimidad de
+los resultados [Fuente 3].
+
+### Geografía Política
+
+La geografía política desempeñó un papel determinante en estas
+elecciones. La distribución de votos por regiones geográficas y la
+influencia de zonas rurales versus urbanas en los resultados electorales
+son aspectos cruciales para entender la dinámica electoral peruana. El
+análisis de la geografía política proporciona una visión más completa de
+las divisiones regionales y las preferencias electorales en el país,
+arrojando luz sobre las dinámicas sociopolíticas [Fuente 4].
+
+En resumen, el análisis de las elecciones presidenciales del 2021 en
+Perú es relevante debido a su profundo impacto en la política peruana,
+la sociedad y la democracia en general. Los factores mencionados
+anteriormente están interconectados y contribuyeron a la relevancia de
+este estudio. Comprender los motivos detrás del resultado inesperado, la
+polarización política, la caída de la participación ciudadana y la
+influencia de la geografía política es esencial para evaluar el estado
+de la democracia en el país y proporcionar información valiosa para
+futuros estudios y decisiones políticas.
+
+
+# **II. Objetivos del estudio**
+
+- **Evaluación de la Participación Electoral:** Un aspecto primordial de este proyecto será examinar la movilización de los votantes y las tasas de abstención. Investigar las tendencias de participación electoral y cuantificar los factores que influyen en la decisión de un individuo de votar, ofrece una perspectiva vital sobre el compromiso ciudadano y la eficacia de los procesos de movilización.
+- **Análisis geográfico de las preferencias de voto:** Este estudio también busca desglosar los resultados electorales según regiones geográficas, lo que permitirá identificar posibles patrones de voto y la influencia regional en las preferencias electorales. Este enfoque demográfico puede aportar conocimientos valiosos sobre el comportamiento electoral y los factores culturales, económicos o sociales que pueden influir en las tendencias de voto de una región.
+- **Comparación de financiamiento de campaña y resultados electorales:** Además, se analizará la relación entre el financiamiento de las campañas y los resultados electorales. El objetivo de este análisis es explorar si existe una correlación entre un mayor financiamiento y un mejor desempeño en las elecciones, lo que podría indicar la influencia del poder económico en las preferencias electorales. Además, este análisis puede proporcionar una visión crítica de la transparencia y la equidad en las elecciones presidenciales.
+
+# **III. Proveniencia y disponibilidad de los datos**
+
+Para lograr un mejor análisis vamos a hacer uso de 4 bases de datos. Las
+4 son públicas y fueron obtenidas de páginas oficiales, que serán
+mencionadas a continuación.
+
+### Base de datos 1
+
+1\. [Datos abiertos-Gobierno del
+Perú](https://www.datosabiertos.gob.pe/dataset/resultados-por-mesa-de-las-elecciones-presidenciales-2021-segunda-vuelta-oficina-nacional-de "https://www.datosabiertos.gob.pe/dataset/resultados-por-mesa-de-las-elecciones-presidenciales-2021-segunda-vuelta-oficina-nacional-de")
+
+Resultados por mesa de las Elecciones Presidenciales 2021 Segunda
+Vuelta - [Oficina Nacional de Procesos Electorales (ONPE)]
+
+##### Datos
+
+Descripción de datos y tipos de variables organizadas
+```{r echo=FALSE}
+library(readr)
+# Tabla de variables
+library(knitr)
+```
+
+```{r echo=FALSE}
+DatosAbiertos <- read.csv("result_resumen_por_mesa.csv")
+```
+
+
+```{r echo=FALSE}
+
+kable(data.frame(
+  Variables = c("Departamento", "Provincia", "Distrito", "Num_electores", "Total_de_votantes", "Estado_del_acta", "VotosPeruLibre", "VotosFuerzaPopular", "Votos_validos", "Votos_en_blanco", "Votos_nulos", "Votos_impugnados", "Votos_emitidos", "Votos_primera_vuelta_18_partidos", "Primera_vuelta_blanco", "Primera_vuelta_nulo"),
+  Importancia = c(
+    "Variable para entender cómo votaron las diferentes regiones del país y cómo se distribuyeron los votos en todo el territorio peruano.",
+    "Variable para entender cómo votaron las diferentes provincias del país y cómo se distribuyeron los votos en cada una de ellas.",
+    "Variable para entender cómo votaron los diferentes distritos del país y cómo se distribuyeron los votos en cada uno de ellos.",
+    "Variable para entender cuántas personas estaban habilitadas para votar en las elecciones presidenciales y cuál fue la participación ciudadana.",
+    "Variable para entender cuántas personas efectivamente votaron en las elecciones presidenciales.",
+    "Variable para entender si las actas electorales fueron aprobadas, observadas o impugnadas.",
+    "Variable para entender cuántos votos obtuvo el partido político Perú Libre en segunda vuelta , liderado por Pedro Castillo, en las elecciones presidenciales.",
+    "Variable para entender cuántos votos obtuvo el partido político Fuerza Popular en segunda vuelta,liderado por Keiko Fujimori, en las elecciones presidenciales.",
+    "Variable para entender cuántos votos fueron válidos en segunda vuelta de las elecciones presidenciales.",
+    "Variable para entender cuántos votos fueron en blanco en segunda vuelta de las elecciones presidenciales.",
+    "Variable para entender cuántos votos fueron nulos en segunda vuelta de  las elecciones presidenciales.",
+    "Variable para entender cuántos votos fueron impugnados en segunda vuelta de las elecciones presidenciales.",
+    "Variable para entender cuántos votos fueron emitidos en segunda vuelta de las elecciones presidenciales.",
+    "Variable para entender tendencia política, cuántos votos obtuvieron los 18 partidos políticos en la primera vuelta de las elecciones presidenciales.",
+    "Variable para entender cuántos votos en blanco hubo en la primera vuelta de las elecciones presidenciales.",
+    "Variable para entender cuántos votos nulos hubo en la primera vuelta de las elecciones presidenciales."
+  ),
+  `Tipo_de_variable` = c("Cualitativa nominal", "Cualitativa nominal", "Cualitativa nominal", "Cuantitativa discreta", "Cuantitativa discreta", "Cualitativa nominal", "Cuantitativa discreta", "Cuantitativa discreta", "Cuantitativa discreta", "Cuantitativa discreta", "Cuantitativa discreta", "Cuantitativa discreta", "Cuantitativa discreta", "Cuantitativa discreta", "Cualitativa nominal", "Cualitativa nominal")
+))
+```
+
+
+### Base de datos 2
+
+2\. [RESULTADO PRESIDENCIAL
+OFICIAL](https://resultadoshistorico.onpe.gob.pe/EG2021/EleccionesPresidenciales/RePres/T "https://resultadoshistorico.onpe.gob.pe/EG2021/EleccionesPresidenciales/RePres/T")
+
+Resultados de formula presidencial con variables de información exacta
+sobre los partidos políticos.
+
+##### Datos
+
+Descripción de datos y tipos de variables organizadas.
+
+```{r echo=FALSE}
+Presidencial <- read.csv("generalPresidencial.csv")
+```
+
+```{r echo=FALSE}
+# Crear vectores con los datos de participación ciudadana
+electores_habiles <- 25287954
+participacion_ciudadana <- 17713716
+porcentaje_participacion <- 70.048
+
+# Crear un data frame con los resultados de las organizaciones políticas
+resultados_politicos <- kable(data.frame(
+  Tipo_de_votos = c(
+    "PARTIDO POLITICO NACIONAL PERU LIBRE", "FUERZA POPULAR", "RENOVACION POPULAR",
+    "AVANZA PAIS - PARTIDO DE INTEGRACION SOCIAL", "JUNTOS POR EL PERU", "ACCION POPULAR",
+    "ALIANZA PARA EL PROGRESO", "PODEMOS PERU", "VICTORIA NACIONAL", "PARTIDO MORADO",
+    "PARTIDO NACIONALISTA PERUANO", "PARTIDO POLITICO NACIONAL PERU LIBRE", "DEMOCRACIA DIRECTA",
+    "PARTIDO POPULAR CRISTIANO - PPC", "EL FRENTE AMPLIO POR JUSTICIA, VIDA Y LIBERTAD",
+    "PERU PATRIA SEGURA", "UNION POR EL PERU", "RENACIMIENTO UNIDO NACIONAL",
+    "PARTIDO DEMOCRATICO SOMOS PERU", "TOTAL DE VOTOS VALIDOS", "VOTOS EN BLANCO", "VOTOS NULOS",
+    "TOTAL DE VOTOS EMITIDOS"
+  ),
+  Votos_Válidos = c(
+    2724752, 1930762, 1692279, 1674201, 1132577, 1306288, 867025, 812721, 814516, 325608,
+    230831, 2724752, 50802, 286447, 65300, 55644, 101267, 89376, 240234, 14400630, 2190059,
+    1123027, 17713716
+  ),
+  Porcentaje_Válidos = c(
+    "18.921%", "13.407%", "11.751%", "11.626%", "7.865%", "9.071%", "6.021%", "5.644%",
+    "5.656%", "2.261%", "1.603%", "18.921%", "0.353%", "1.989%", "0.453%", "0.386%", "0.703%",
+    "0.621%", "1.668%", "100.000%", "", "", ""
+  )
+))
+
+# Imprimir la tabla con clases CSS personalizadas
+resultados_politicos
+
+
+```
+
+### Base de datos 3
+
+3\. [ONPE
+OFICIAL](https://resultadoshistorico.onpe.gob.pe/EG2021/EleccionesPresidenciales/RsPres "https://resultadoshistorico.onpe.gob.pe/EG2021/EleccionesPresidenciales/RsPres")
+
+Resultados de formula presidencial actualizado el 31/05/2021 a las 16:29
+h.
+
+##### Datos
+
+Descripción de datos y tipos de variables organizadas.
+
+```{r include=FALSE}
+# El CSV (Presidencial_.csv) estaba mal estructurado, por lo cual, lo hemos vuelto a armar,
+
+# Crear un data frame con los datos
+datos <- data.frame(
+  "Tipo de votos" = c(
+    "PARTIDO NACIONALISTA PERUANO", "EL FRENTE AMPLIO POR JUSTICIA VIDA Y LIBERTAD",
+    "PARTIDO MORADO", "PERU PATRIA SEGURA", "VICTORIA NACIONAL", "ACCION POPULAR",
+    "AVANZA PAIS PARTIDO DE INTEGRACION SOCIAL", "PODEMOS PERU", "JUNTOS POR EL PERU",
+    "PARTIDO POPULAR CRISTIANO - PPC", "FUERZA POPULAR", "UNION POR EL PERU",
+    "RENOVACION POPULAR", "RENACIMIENTO UNIDO NACIONAL", "PARTIDO DEMOCRATICO SOMOS PERU",
+    "PARTIDO POLITICO NACIONAL PERU LIBRE", "DEMOCRACIA DIRECTA", "ALIANZA PARA EL PROGRESO",
+    "TOTAL DE VOTOS VÁLIDOS", "VOTOS EN BLANCO", "VOTOS NULOS", "TOTAL DE VOTOS EMITIDOS",
+    "VOTOS ESPERADOS"
+  ),
+  "Votos" = c(
+    230831, 65300, 325608, 55644, 814516, 1306288, 1674201, 812721, 1132577, 286447,
+    1930762, 101267, 1692279, 89376, 240234, 2724752, 50802, 867025, 14400630, 2190059,
+    1123027, 17713716, 25287954
+  ),
+  "Porcentaje Válidos" = c(
+    1.603, 0.453, 2.261, 0.386, 5.656, 9.071, 11.626, 5.644, 7.865, 1.989, 13.407, 0.703,
+    11.751, 0.621, 1.668, 18.921, 0.353, 6.021, 100.000, NA, NA, NA, NA
+  )
+)
+
+# Escribir el data frame en un archivo CSV
+write.csv(datos, "Presidencial.csv", row.names = FALSE)
+
+Formula <- read.csv("Presidencial.csv")
+
+```
+
+```{r echo=FALSE}
+# Crear la tabla
+datos <- kable(data.frame(
+  Variable = c("TOTAL DE ACTAS", "PROCESADAS", "CONTABILIZADAS", "PARA ENVIO AL JEE", "POR PROCESAR", "ELECTORES HÁBILES", "CIUDADANOS QUE VOTARON", "AUSENTISMO", "% DE PARTICIPACIÓN", "% DE AUSENTISMO"),
+  `Importancia` = c("Permite conocer el número total de actas en las elecciones presidenciales", "Indica el número de actas procesadas en las elecciones presidenciales", "Indica el número de actas contabilizadas en las elecciones presidenciales", "Indica el número de actas que aún no han sido enviadas al JEE", "Indica el número de actas que aún no han sido procesadas", "Indica el número de personas habilitadas para votar en las elecciones presidenciales", "Indica el número de personas que efectivamente votaron en las elecciones presidenciales", "Indica el número de personas que no votaron en las elecciones presidenciales", "Indica el porcentaje de personas que votaron en las elecciones presidenciales", "Indica el porcentaje de personas que no votaron en las elecciones presidenciales"),
+  `Tipo_de_variable` = c("Categórica", "Categórica", "Categórica", "Categórica", "Categórica", "Numérica", "Numérica", "Numérica", "Porcentaje", "Porcentaje")
+))
+
+# Imprimir la tabla
+datos
+
+```
+
+### Base de datos 4
+
+4\. [FINANCIAMIENTO DE CAMPAÑAS POLÍTICAS](https://www.web.onpe.gob.pe/claridadCiudadano2/dashboard "https://www.web.onpe.gob.pe/claridadCiudadano2/dashboard")
+
+Resultados del financiamiento de la campaña política de cada partido política.
+
+##### Datos
+
+Descripción de datos y tipos de variables organizadas.
+
+```{r include=FALSE}
+Financiamiento <- read.csv("financiamiento_cp.csv", sep=';')
+```
+
+```{r echo=FALSE}
+# Crear la tabla
+datos <- kable(data.frame(
+  Variable = c("TIPO DE OP",	"ORGANIZACIÓN POLÍTICA (OP)",	"RUC",	"ÁMBITO"	,"DEPARTAMENTO",	"PROVINCIA",	"DISTRITO",	"ENTREGA",	"ESTADO"	,"FECHA DE PRESENTACIÓN",	"ANEXO 5A",	"ANEXO 5B"	,"ANEXO 5C",	"ANEXO 5D",	"ANEXO 6A",	"ANEXO 6B", "ANEXO 6C"),
+  `Importancia` = c("Tipo de organización política", "Nombre de la organización política", "RUC de la organización política", "Ámbito de la organización política", "Departamento de la campaña política", "Provincia de la campaña política", "Distrito de la campaña electoral", "Tipo de entrega del informe financiero", "Estado de la entrega del informe financiero", "Fecha de entrega del informe financiero", "Saldo inicial de campaña electoral", "Aportaciones individuales en efectivo y en especie", "Ingresos por actividades de financiamiento proselitista", "Otros ingresos de campaña electoral", "Gastos de propaganda electoral efectuados en medios de comunicación", "Otros gastos de propaganda electoral", "Otros gastos de campaña electoral"),
+  `Tipo_de_variable` = c("Cualitativa nominal", "Cualitativa nominal", "Cualitativa nominal", "Cualitativa nominal", "Cualitativa nominal", "Cualitativa nominal", "Cualitativa nominal", "Cualitativa nominal", "Cualitativa nominal", "Cualitativa nominal", "Cuantitativa continua", "Cuantitativa continua","Cuantitativa continua","Cuantitativa continua","Cuantitativa continua","Cuantitativa continua", "Cuantitativa continua")
+))
+
+# Imprimir la tabla
+datos
+
+```
+
+# **IV. Técnicas modernas en ciencias e ingeniería**
+
+En la era actual de la información, la ciencia y la ingeniería han experimentado un avance significativo en la aplicación de técnicas modernas que permiten el análisis de datos de una manera nunca antes vista. La estadística y la probabilidad desempeñan un papel fundamental en este proceso, particularmente en el campo de la ciencia de datos.
+
+La ciencia de datos se ha convertido en un pilar fundamental para la toma de decisiones en una variedad de campos, desde la medicina hasta la política. La estadística y la probabilidad son los cimientos sobre los que se construye la ciencia de datos. Estas disciplinas permiten a los científicos de datos analizar, interpretar y extraer información valiosa de conjuntos de datos masivos; además de seguir los procesos correspondientes para que el ciclo de un proyecto tome buen rumbo.
+
+En la actualidad, existen numerosas técnicas modernas en ciencia de datos que aprovechan al máximo la estadística y la probabilidad. Algunas de las más relevantes incluyen:
+
+- `Machine Learning: El aprendizaje automático se basa en modelos estadísticos y probabilísticos para entrenar algoritmos que pueden predecir resultados futuros a partir de datos pasados. Esto se aplica en campos como la clasificación de imágenes, el procesamiento de lenguaje natural y la recomendación de contenido.`
+- `Análisis de Redes Bayesianas: Las redes bayesianas son herramientas poderosas para modelar relaciones probabilísticas entre variables. Se utilizan en diagnósticos médicos, sistemas de recomendación y pronósticos electorales .`
+- `Estadísticas Descriptivas y Visualización de Datos: La visualización de datos y las estadísticas descriptivas permiten resumir y presentar datos de manera efectiva, lo que es crucial para la toma de decisiones informadas.`
+- `Procesamiento de Datos en Tiempo Real: La estadística y la probabilidad se utilizan para analizar datos en tiempo real, lo que es esencial en aplicaciones como la detección de fraudes y la monitorización de sistemas.`
+
+En resumen, las técnicas modernas en ciencias e ingeniería, con un enfoque en la estadística y la probabilidad aplicadas en la ciencia de datos, han revolucionado la forma en que se abordan los problemas y se toman decisiones. La capacidad de analizar grandes volúmenes de datos y extraer información valiosa ha impulsado avances significativos en diversos campos. El futuro de la ciencia y la ingeniería seguirá estando estrechamente ligado a la evolución constante de estas técnicas modernas
+
+# **V. Análisis descriptivo preeliminar**
+
+### Número de mesas electorales por departamento
+
+```{r echo=FALSE}
+library(dplyr)
+
+# Lista de los 25 departamentos del Perú
+departamentos_peru <- c(
+  "Amazonas", "Ancash", "Apurimac", "Arequipa", "Ayacucho",
+  "Cajamarca", "Callao", "Cusco", "Huancavelica", "Huanuco",
+  "Ica", "Junin", "La Libertad", "Lambayeque", "Lima", "Loreto",
+  "Madre de Dios", "Moquegua", "Pasco", "Piura", "Puno",
+  "San Martin", "Tacna", "Tumbes", "Ucayali"
+)
+
+# Convertir nombres de departamentos a mayúsculas
+departamentos_peru <- toupper(departamentos_peru)
+
+# Crear una lista para almacenar los resultados
+resultados_por_departamento <- list()
+
+# Contar filas para cada departamento
+for (departamentos in departamentos_peru) {
+  resultados_por_departamento[[departamentos]] <-
+    nrow(filter(DatosAbiertos, departamento == departamentos))
+}
+
+resultados_por_departamento_df <- as.data.frame(resultados_por_departamento)
+
+
+mesas_dep <- barplot(as.matrix(resultados_por_departamento_df), legend.text = rownames(resultados_por_departamento_df), col=c('#A9D9A2'),xlab = "Departamentos", ylab = "Número de mesas electorales", ylim=c(0,25000))
+text(x=mesas_dep, y=resultados_por_departamento_df, pos=3, cex=0.5, col="black",
+     label=round(resultados_por_departamento_df, 4))
+
+```
+
+El gráfico de barras muestra el número de mesas electorales por departamento del Perú, el cual presenta un distribución asimétrica en la cantidad de mesas electorales. Y se puede apreciar que el departamento de Lima destaca por la mayor cantidad de mesas electorales instaladas, de 24306, lo que lo convierte en la región con mayor infraestructura electoral en el país.
+
+### Votos válidos por patido político
+
+```{r echo=FALSE}
+df_filtrado <- Formula %>% filter(Tipo.de.votos != "VOTOS EN BLANCO" & Tipo.de.votos != "VOTOS NULOS" & Tipo.de.votos != "TOTAL DE VOTOS VÁLIDOS" & Tipo.de.votos != "TOTAL DE VOTOS EMITIDOS" & Tipo.de.votos != "VOTOS ESPERADOS")
+
+votos_x_partido <- as.numeric(df_filtrado$Votos)
+
+boxplot(votos_x_partido, col=c('#F7CB9D')) 
+```
+
+```{r echo=FALSE}
+df_filtrado <- Formula %>% filter(Tipo.de.votos != "VOTOS EN BLANCO" & Tipo.de.votos != "VOTOS NULOS" & Tipo.de.votos != "TOTAL DE VOTOS VÁLIDOS" & Tipo.de.votos != "TOTAL DE VOTOS EMITIDOS" & Tipo.de.votos != "VOTOS ESPERADOS")
+
+votos_x_partido <- as.numeric(df_filtrado$Votos)
+
+boxplot(votos_x_partido, col=c('#F7CB9D'))
+abline(h=mean(votos_x_partido),col = "red", lwd=3)
+abline(h=median(votos_x_partido),col = "black", lwd=3)
+```
+*Descripcion del gráfico*
+
+Cuantiles
+```{r echo=FALSE}
+quantile(votos_x_partido)
+```
+A través del los cuantiles podemos observar que en el cuantil *máximo* se encuentra la mayor concentración de votos por partido, lo cual indica que una gran cantidad de la población estuvo a favor de un partido político el cual es Peru Libre.
+
+Rango
+```{r echo=FALSE}
+range(votos_x_partido)
+```
+Además, se observa que la menor cantidad de votos por partido es de 50802, y la mayor cantidad de votos es de 2724752. Se observa una diferencia significativa entre el rango menor y mayor.
+
+Desviación estándar
+```{r echo=FALSE}
+round(sd(votos_x_partido),2)
+```
+Por otro lado, se aprecia que la desviación estándar es muy alta, lo cual indica una alta competencia electoral previo a las elecciones. Los votos válidos por partido político son hallados a partir de la data "DatosAbiertos" a partir de esta fórmula : $votos\_validos=votos\_emitidos-votos\_en\_blanco - votos\_nulos - votos_impugandos$
+
+### Financiamiento de campaña electoral por patido político
+
+Analizaremos los siete anexos que componen el financiamiento de las campañas electorales de los partidos políticos.
+
+Recordar que los anexos fueron explciados anteriormente en el punto III, base de datos 4.`
+
+####  Anexo 5A
+
+```{r echo=FALSE}
+Financiamiento <- na.omit(Financiamiento %>%
+  mutate(ANEXO.5A = ifelse(ANEXO.5A == "-", NA, ANEXO.5A)))
+
+anexo5a <- as.numeric(Financiamiento$ANEXO.5A)
+
+boxplot(anexo5a, col=c('#F7CB9D'))
+```
+
+Dado los valores únicos del vector que contiene el anexo 5A, se conoce que solo un partido político obtuvo un financiamiento inicial el cual es *FRENTE POPULAR AGRICOLA FIA DEL PERU - FREPAP*. Entonces, según lo reportado en el anexo, ningún otro partido obtuvo un saldo inicial para su campaña de parte del partido.
+
+####  Anexo 5B   
+
+```{r echo=FALSE}
+Financiamiento <- na.omit(Financiamiento %>%
+  mutate(ANEXO.5B = ifelse(ANEXO.5B == "-", NA, ANEXO.5B)))
+
+anexo5B <- as.numeric(Financiamiento$ANEXO.5B)
+
+boxplot(anexo5B, col=c('#F7CB9D'))
+```
+
+El Anexo 5B pertenece a las aportaciones individuales en efectivo y en especie y se presentan 3 datos atípicos. El partido que tuvo la mayor aportación individual en efectivo fue Podemos Perú, y los dos partidos con la menor aportación individual en efectivo fueron Perú Libre con 31.408 y el Partido Aprista Peruano con 0.
+
+####  Anexo 5C
+
+```{r echo=FALSE}
+Financiamiento <- na.omit(Financiamiento %>%
+  mutate(ANEXO.5C = ifelse(ANEXO.5C == "-", NA, ANEXO.5C)))
+
+anexo5C <- as.numeric(Financiamiento$ANEXO.5C)
+
+boxplot(anexo5C, col=c('#F7CB9D'))
+```
+
+El Anexo 5C pertenece a los ingresos por actividades de financiamiento proselitista. Se presentan 2 datos atípicos debido a que los partidos de Frente Amplio y Avanza País tuvieron ingresos por actividades de financiamiento proselitistas de 6.640 y 252.990,43, respectivamente. Todos los otros partidos tuvieron 0 ingresos.
+
+####  Anexo 5D
+
+```{r echo=FALSE}
+Financiamiento <- na.omit(Financiamiento %>%
+  mutate(ANEXO.5D = ifelse(ANEXO.5D == "-", NA, ANEXO.5D)))
+
+anexo5D <- as.numeric(Financiamiento$ANEXO.5D)
+
+boxplot(anexo5D, col=c('#F7CB9D'))
+```
+
+El Anexo 5D pertenece a otros ingresos de campaña electoral. Los datos atípicos que se presentan son debido a que algunos partidos no tuvieron otros ingresos. Los únicos partidos que sí tuvieron otros ingresos fueron: Partido Político Contigo (2.280), Renacimiento Unido Nacional (23.550), Alianza para el Progreso (78.056) y Renovación Popular (174.880).
+
+####  Anexo 6A
+
+```{r echo=FALSE}
+Financiamiento <- na.omit(Financiamiento %>%
+  mutate(ANEXO.6A = ifelse(ANEXO.6A == "-", NA, ANEXO.6A)))
+
+anexo6A <- as.numeric(Financiamiento$ANEXO.6A)
+
+boxplot(anexo6A, col=c('#F7CB9D'))
+```
+
+El Anexo 6A pertenece a los gastos de propaganda electoral efectuados en medios de comunicación. El partido que más gastó/invirtió en propaganda electoral por medios de comunicación fue Alianza por el Progreso con 1,139,285.03, y por lo menos la mitad de los partidos tuvo gastos por propaganda electoral por medios de comunicación.
+
+####  Anexo 6B
+
+```{r echo=FALSE}
+Financiamiento <- na.omit(Financiamiento %>%
+  mutate(ANEXO.6B = ifelse(ANEXO.6B == "-", NA, ANEXO.6B)))
+
+anexo6B <- as.numeric(Financiamiento$ANEXO.6B)
+
+boxplot(anexo6B, col=c('#F7CB9D'))
+```
+
+El Anexo 6B pertenece a otros gastos de propaganda electoral. Se visualizan 2 datos atípicos por Alianza para el Progreso (1,122,185.28) y Podemos Perú (1,412,112.38) en otros gastos de propaganda electoral. Además, son 4 partidos políticos los cuales no tuvieron otros gastos de propaganda electoral.
+
+####  Anexo 6C
+
+```{r echo=FALSE}
+Financiamiento <- na.omit(Financiamiento %>%
+  mutate(ANEXO.6C = ifelse(ANEXO.6C == "-", NA, ANEXO.6C)))
+
+anexo6C <- as.numeric(Financiamiento$ANEXO.6C)
+
+boxplot(anexo6C, col=c('#F7CB9D'))
+```
+
+El Anexo 6C pertenece a otros gastos de campaña electoral. Se visualizan 2 datos atípicos. Además, el partido que más gastos por campaña electoral tuvo fue Podemos Perú con 625,385.65 y los que menos tuvieron otros gastos en campaña electoral fueron: Juntos por el Perú con 0 gastos, Partido Aprista Peruano con 0 gastos, y Frente Amplio con 20,700.
+
+### Participación ciudadana según los votos emitidos
+
+```{r echo=FALSE}
+library(ggplot2)
+# Crear un nuevo data frame con las columnas deseadas
+df_filtrado_vp <- Presidencial %>% filter(X.Tipo != "% DE PARTICIPACIÓN" & X.Tipo != "% DE AUSENTISMO")
+pc_x_p <- list(Tipo = df_filtrado_vp$X.Tipo, Votos = df_filtrado_vp$TOTAL) 
+
+pc_x_p_df <- as.data.frame(pc_x_p) 
+
+grafica <- ggplot(pc_x_p_df, aes(x =Tipo, y = Votos))
+grafica + geom_bar(stat = "identity", fill = "#A9D9A2") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  labs(title = "Participación ciudadana", y = "Votos")
+
+```
+
+En el gráfico se puede visualizar que, aunque la cantidad de ausentismo es menor a la mitad de la cantidad de ciudadanos que votaron, aún sigue siendo alto el porcentaje de ausentismo (29.952%). También se aprecia que la cantidad de ciudadanos que votaron tiene un porcentaje del 70.048%. Siendo el 100% la cantidad de Electores Hábiles (25,287,954).
+
+# **VI. Distribuciones muestrales**
+
+### Caso Estudio 1: ¿Cuál es la probabilidad que Fuerza Poupular obtenga el 10% de votos frente a todos los partidos políticos? 
+
+Trabajaremos este caso con una muestra de 1000 votos. Teniendo en cuenta que durante este período electoral, los votos emitidos fueron 17 713 716.
+
+$$
+P(fp \leq 10) \\
+fp: votos \ de \ Fuerza \ Popular
+$$
+
+
+```{r echo=FALSE}
+v_e = 17713716
+v_FP = (filter(Formula, Tipo.de.votos == "FUERZA POPULAR"))$Votos
+pi_poblacional=  v_FP / v_e
+muestra= 1000
+omega= sqrt((pi_poblacional*(1-pi_poblacional))/muestra)
+pnorm(0.10, pi_poblacional, omega)
+pnorm(0.40, pi_poblacional, omega)
+```
+
+La interpretación de los resultados es que la probabilidad de que Fuerza Popular obtenga el 10% de los votos es del 18.06% y la probabilidad de que obtenga el 40% de los votos es del 100%. Se evidencia claramente la tendencia que existe sobre Fuerza Popular de ganar en la contienda electoral tener en cuenta que las probabilidades calculadas en el caso de estudio se basan en una muestra y no representan necesariamente las probabilidades reales en las elecciones. Además, las probabilidades de ganar en las elecciones pueden verse afectadas por muchos factores, como la popularidad del candidato, la plataforma política del partido y la situación económica y social del país.
+
+### Caso Estudio 2: ¿Cuál es la probabilidad que los votos por Perú Libre en Lima superen a los que se emitieron en Callao en al menos 5%, en la segunda vuelta electoral? 
+
+Trabajaremos este caso con los votos por cada mesa electoral de dichos departamentos. Teniendo como voto validos solo los que se emitieron por Peru Libre y Fuerza Popular.
+Tomaremos de muestra 10000 votos en Lima y 1000 votos en Callao.
+
+$$
+P(pl \geq fp + 0.05) \\
+pl: votos \ de \ Peru \ Libre \\
+fp: votos \ de \ Fuerza \ Popular
+$$
+
+```{r echo=FALSE}
+me_lima_pl= sum(na.omit(filter(DatosAbiertos, departamento == "LIMA")$votos_pl))
+me_lima_fp= sum(na.omit(filter(DatosAbiertos, departamento == "LIMA")$votos_fp))
+me_callao_pl= sum(na.omit(filter(DatosAbiertos, departamento == "CALLAO")$votos_pl))
+me_callao_fp= sum(na.omit(filter(DatosAbiertos, departamento == "CALLAO")$votos_fp))
+
+
+voto_totales_l= me_lima_pl+me_lima_fp #5190192 se emitieron en Lima
+
+voto_totales_c= me_callao_pl+me_callao_fp #596960 se emitieron en Callao.
+
+#Tomaremos de muestra 10000 votos en Lima y 1000 votos en Callao.
+
+pi_poblacional_lima=  me_lima_pl / voto_totales_l
+pi_poblacional_callao=  me_callao_pl / voto_totales_c
+
+muestra_lima=10000
+muestra_callao=1000
+
+mu= pi_poblacional_lima-pi_poblacional_callao
+ds= sqrt(((pi_poblacional_lima*(1-pi_poblacional_lima))/muestra_lima)+((pi_poblacional_callao*(1-pi_poblacional_callao))/muestra_callao))
+pnorm(0.05, mu, ds, lower.tail = FALSE)
+```
+
+El caso de estudio 2 se aplicó la fórmula de la distribución normal estándar para calcular la probabilidad.
+Tenemos como datos que se emitieron un total de 5190192 votos en Lima y 596960 en el Callao; cabe resaltar que solo se utiliza una muestra de 10000 votos en Lima y 1000 votos en Callao.
+Los resultados indican que la probabilidad de que los votos por Perú Libre en Lima superen a los que se emitieron en Callao en al menos un 5% es del 4.41%
+
+### Caso Estudio 3: ¿Cuál es la probabilidad que el promedio de votos por Fuerza Popular en las mesas electorales en Lima superen a los que se emitieron en las mesas electorales en Cajamarca en al menos 90 votos, en la segunda vuelta electoral? 
+
+Trabajaremos este caso con los votos por cada mesa electoral de dichos departamentos. Teniendo como voto validos solo los que se emitieron por Peru Libre y Fuerza Popular.
+
+$$
+P(\bar{x}_{Lima} \geq \bar{x}_{Cajamarca} + 90) \\
+\bar{x}_{Lima}: Votos \ promedio \ por \ Peru\ Libre\ en \ Lima \\
+\bar{x}_{Cajamarca}: Votos \ promedio \ por \ Peru\ Libre\ en \ Cajamarca
+$$
+
+```{r echo=FALSE}
+me_lima_fp= mean(na.omit(filter(DatosAbiertos, departamento == "LIMA")$votos_fp))
+me_cajamarca_fp= mean(na.omit(filter(DatosAbiertos, departamento == "CAJAMARCA")$votos_fp))
+
+sd_lima_fp= sd(na.omit(filter(DatosAbiertos, departamento == "LIMA")$votos_fp))
+sd_cajamarca_fp= sd(na.omit(filter(DatosAbiertos, departamento == "CAJAMARCA")$votos_fp))
+
+muestra_lima=10000
+muestra_cajamarca=1000
+
+mu= me_lima_fp-me_cajamarca_fp
+
+ds= sqrt(((sd_cajamarca_fp**2)/muestra_cajamarca)+((sd_lima_fp**2)/muestra_lima))
+
+pnorm(90, mu, ds, lower.tail = FALSE)
+```
+
+Para responder a este caso de estudio, se realizó un análisis utilizando los votos por cada mesa electoral de dichos departamentos, teniendo como votos válidos solo los que se emitieron por Perú Libre y Fuerza Popular.
+El análisis estadístico arrojó que la media de votos por Fuerza Popular en Lima fue de 144.6648, mientras que en Cajamarca fue de 53.67436. La diferencia entre ambas medias fue de 90.99049. Además, se calculó la desviación estándar de los votos por Fuerza Popular en Lima y Cajamarca, que fueron de 30.76121 y 30.45527, respectivamente.
+Con estos datos, se calculó la probabilidad de que el promedio de votos por Fuerza Popular en las mesas electorales en Lima supere a los que se emitieron en las mesas electorales en Cajamarca en al menos 90 votos, en la segunda vuelta electoral. La probabilidad obtenida fue de 0.8363824.
+En resumen, el análisis estadístico realizado sugiere que hay una alta probabilidad de que el promedio de votos por Fuerza Popular en las mesas electorales en Lima supere a los que se emitieron en las mesas electorales en Cajamarca en al menos 90 votos, en la segunda vuelta electoral.
+
+### Caso Estudio 4: ¿cuál es la probabilidad de que la varianza muestral de los votos por Perú Libre de las mesas electorales de Lima supere a la varianza muestral de los votos por Perú Libre de las mesas electorales de Madre de Dios en un 20% de su valor? 
+
+Trabajaremos este caso con los votos por cada mesa electoral de dichos departamentos. Teniendo como voto validos solo los que se emitieron por Peru Libre y Fuerza Popular.
+
+$$
+P(s_{Lima}^2\ >  s_{Madre \ de \ Dios}^2\ + 20\%\ s_{Madre \ de \ Dios}^2) \\
+s_{Lima}^2\ : Varianza \ muestral \ de \ los \ votos\ por \ Peru \ Libre \ en \ Lima \\
+s_{Madre \ de \ Dios}^2\ : Varianza \ muestral \ de \ los \ votos\ por \ Peru \ Libre \ en \ Madre\ de \ Dios \\
+$$
+
+```{r echo=FALSE}
+var_lima_pl= var(na.omit(filter(DatosAbiertos, departamento == "LIMA")$votos_pl))
+var_md_pl= var(na.omit(filter(DatosAbiertos, departamento == "MADRE DE DIOS")$votos_pl))
+
+muestra_lima= 10000-1
+muestra_md= 1000-1
+
+d_var= 1.2 *(var_md_pl/var_lima_pl)
+
+pf(d_var, muestra_lima, muestra_md)
+```
+
+Para responder a este caso de estudio, se calcularon las varianzas muestrales de los votos por Perú Libre en Lima y Madre de Dios. Luego, se utilizó la fórmula para calcular la distribución F de Fisher para comparar las varianzas muestrales. Se multiplicó la varianza muestral de Madre de Dios por 1.2 y se dividió entre la varianza muestral de Lima para obtener el valor de F.
+El resultado obtenido fue una probabilidad de 0.9636691. Esto sugiere que hay una alta probabilidad de que la varianza muestral de los votos por Perú Libre de las mesas electorales de Lima supere a la varianza muestral de los votos por Perú Libre de las mesas electorales de Madre de Dios en un 20% de su valor.
+
+# **VII. Intervalos de Confianza**
+
+### Caso Estudio 1: ¿Cuál es el intervalo de confianza de la diferencia de votos por Perú Libre en las mesas de Lima y Cajamarca?
+
+La muestra que tomaremos será de 1000 mesas. Trabajando con un nivel de confianza de 98%.
+
+```{r echo=FALSE}
+M_C_L <- DatosAbiertos %>% filter(departamento == "LIMA" | departamento == "CAJAMARCA")
+
+#Muestra aleatoria
+n=1000
+M_C_L_MUESTRA<- sample_n(M_C_L,n,replace=FALSE) # al poner FALSE será sin reemplazo
+
+```
+
+```{r echo=FALSE}
+M_V_L<-filter(M_C_L_MUESTRA, departamento == "LIMA")
+M_V_C<- filter(M_C_L_MUESTRA, departamento == "CAJAMARCA")
+
+M_VAR_L<-var(M_V_L$votos_pl, na.rm=T)
+M_VAR_C<-var(M_V_C$votos_pl, na.rm=T)
+
+```
+
+```{r echo=FALSE}
+nc=0.98
+n1=865
+n2=135
+alpha=1-nc
+VC1<-qf(alpha/2, n2-1, n1-1)
+VC2<-qf(1-alpha/2,n2-1,n1-1 )
+
+extremo_inf<- (M_VAR_L/M_VAR_C)*VC1 #0.5038221
+extremo_sup<- (M_VAR_L/M_VAR_C)*VC2 #0.9304107
+extremo_inf
+extremo_sup
+
+```
+
+```{r echo=FALSE}
+#Las variancias no son iguales.
+t.test(M_V_L$votos_pl,M_V_C$votos_pl, var.equal = F, conf.level = 0.9)
+```
+
+Interpretación y Deducciones:
+
+Este estudio de caso tiene como objetivo determinar el intervalo de confianza para la diferencia de votos de Perú Libre en las mesas de Lima y Cajamarca.El tamaño de la muestra es de 1000 tablas y el nivel de confianza es del 98%. El intervalo de confianza para la diferencia de votos se calcula mediante la fórmula (M_VAR_L/M_VAR_C)*VC1 y (M_VAR_L/M_VAR_C)*VC2, donde M_VAR_L y M_VAR_C son las varianzas de los votos de Perú Libre en Lima y Cajamarca, respectivamente, y VC1 y VC2 son los valores críticos de la distribución F.El intervalo de confianza resultante es (0,5038221, 0,9304107).Esto significa que podemos tener un 98% de confianza en que la verdadera diferencia de votos para Perú Libre en Lima y Cajamarca se encuentra entre 0,5038221 y 0,9304107.
+
+Esta información es relevante para el proyecto porque proporciona información sobre los patrones de votación de Perú Libre en diferentes regiones del país.Puede ayudar a identificar áreas donde el partido es más popular y áreas donde necesita mejorar su apoyo.Además, puede proporcionar información sobre la efectividad de las estrategias de campaña del partido en diferentes regiones.
+
+### Caso Estudio 2: ¿Cuál es el intervalo de confianza de la media de los gastos hechos en campaña electoral para todos los partidos políticos?
+
+La muestra que tomaremos será de 10 partidos políticos. Trabajando con un nivel de confianza de 98%.
+
+```{r echo=FALSE}
+Financiamiento <- Financiamiento %>%
+  mutate_all(~ ifelse(. == "-", 0, .))
+
+Financiamiento$ANEXO.5A <- as.numeric(Financiamiento$ANEXO.5A)
+Financiamiento$ANEXO.5B <- as.numeric(Financiamiento$ANEXO.5B)
+Financiamiento$ANEXO.5C <- as.numeric(Financiamiento$ANEXO.5C)
+Financiamiento$ANEXO.5D <- as.numeric(Financiamiento$ANEXO.5D)
+Financiamiento$ANEXO.6A <- as.numeric(Financiamiento$ANEXO.6A)
+Financiamiento$ANEXO.6B <- as.numeric(Financiamiento$ANEXO.6B)
+Financiamiento$ANEXO.6C <- as.numeric(Financiamiento$ANEXO.6C)
+
+Financiamiento <- Financiamiento %>%
+  mutate(NuevaColumna = ANEXO.5A + ANEXO.5B + ANEXO.5C + ANEXO.5D + ANEXO.6A + ANEXO.6B + ANEXO.6C)
+
+```
+
+```{r echo=FALSE}
+n=10
+Financiamiento_m<- sample_n(Financiamiento,n,replace=FALSE)
+Financiamiento_m
+
+```
+
+```{r echo=FALSE}
+# Especifique el tamaño de la muestra
+# n <- length(variableDF)
+# En el problema:
+n<-10
+media_muestral <- mean(na.omit(Financiamiento_m$NuevaColumna))
+# Calcule la desviación estándar muestral en caso la varianza poblacional sea desconocida
+sigma_conocida <- sd(na.omit(Financiamiento$NuevaColumna))
+
+print(paste("el tamaño de muestra es:", n))
+print(paste("la media muestral es:",media_muestral))
+print(paste("la desviación a usar es:", sigma_conocida))
+
+```
+
+```{r echo=FALSE}
+# Calcule el error estándar
+error_estandar <- sigma_conocida / sqrt(n)
+alpha = 0.02  # dato
+z_crítico <- qnorm(1-alpha/2,0,1)
+margen_de_error <- z_crítico* error_estandar
+# Los extremo del intervalo de confianza de la media serán:
+extremo_inferior <- media_muestral - margen_de_error
+extremo_superior <- media_muestral + margen_de_error
+# Imprimir resultados:
+
+print(paste("significación:",alpha))
+print(paste("Error estándar:", error_estandar))
+print(paste("Z crítico:", z_crítico))
+print(paste("margen de error o Tolerancia:", margen_de_error))
+
+print(paste("IC: (",extremo_inferior,";", extremo_superior,")"))
+```
+
+Interpretación y deducciones: 
+
+Este estudio de caso tiene como objetivo determinar el intervalo de confianza para la media de los gastos realizados en la campaña electoral para todos los partidos políticos. El tamaño de la muestra es de 10 partidos políticos y el nivel de confianza es del 98%.El intervalo de confianza para la media se calcula mediante la fórmula media_muestra ± z_crítico * error_estándar, donde media_muestra es la media de los gastos realizados en la campaña electoral de los 10 partidos políticos, error_estándar es el error estándar de la media y z_crítico es el error crítico. valor de la distribución normal estándar.El intervalo de confianza resultante es (0,0, 1, 1,0).
+
+Esto significa que podemos tener un 98% de confianza en que la verdadera media de los gastos realizados en la campaña electoral para todos los partidos políticos se encuentra entre 0,0 y 1,0.Esta información es relevante para el proyecto porque proporciona información sobre los gastos realizados por los partidos políticos durante la campaña electoral.Puede ayudar a identificar áreas donde los partidos políticos gastan más o menos y puede proporcionar información sobre la efectividad de sus estrategias de campaña. Además, puede proporcionar información sobre la transparencia y equidad en el proceso electoral.
+
+### Caso Estudio 3: ¿Cuál es el intervalo de confianza de votos emitidos por Fuerza Popular en Lima?
+
+Trabajando con un nivel de confianza de 95%. Trabajando con 10000 mesas de muestra.
+
+```{r echo=FALSE}
+n=10000
+DatosAbiertos_m<- sample_n(DatosAbiertos,n,replace=FALSE)
+DatosAbiertos_m
+
+```
+
+```{r echo=FALSE}
+V_Totales <- sum(na.omit(DatosAbiertos_m$votos_fp))
+V_Totales_Lima <- sum(na.omit((filter(DatosAbiertos_m, departamento=="LIMA"))$votos_fp))
+
+# Ingrese la proporción muestral
+p<- V_Totales_Lima/V_Totales
+
+# indica el tamaño de muestra
+n<- 10000
+
+# indica el nivel de confianza
+nc<-0.95
+print(paste("el tamaño de muestra es:", n))
+print(paste("el nivel de confianza es:",nc))
+print(paste("la proporción muestral es:", p))
+
+```
+
+```{r echo=FALSE}
+# Calcule el error estándar
+error_estandar <-  sqrt(p*(1-p)/n)
+
+alpha = 1-nc
+z_crítico <- qnorm(1-alpha/2,0,1)
+margen_de_error <- z_crítico* error_estandar
+# Los extremo del intervalo de confianza de la media serán:
+extremo_inferior <- p - margen_de_error
+extremo_superior <- p + margen_de_error
+# Imprimir resultados:
+print(paste("significación:",alpha))
+print(paste("Error estándar:", error_estandar))
+print(paste("Z crítico:", z_crítico))
+print(paste("margen de error o Tolerancia:", margen_de_error))
+print(paste("IC: (",extremo_inferior,";", extremo_superior,")"))
+
+```
+
+Interpretación y deducciones: 
+
+Este estudio de caso tiene como objetivo determinar el intervalo de confianza para los votos emitidos por Fuerza Popular en Lima.El tamaño de la muestra es de 10.000 tablas y el nivel de confianza es del 95%.El intervalo de confianza para la proporción de votos se calcula mediante la fórmula p ± z_critical * error_estándar, donde p es la proporción de votos emitidos por Fuerza Popular en Lima, error_estándar es el error estándar de la proporción y z_crítico es el valor crítico de la distribución normal estándar.El intervalo de confianza resultante es (0,0, 0,0).Esto significa que podemos tener un 95% de confianza en que la verdadera proporción de votos emitidos por Fuerza Popular en Lima se encuentra entre 0,0 y 0,0.
+
+Esta información es relevante para el proyecto porque proporciona información sobre los patrones de votación de Fuerza Popular en Lima. Puede ayudar a identificar áreas donde el partido es más popular y áreas donde necesita mejorar su apoyo. Además, puede proporcionar información sobre la efectividad de las estrategias de campaña del partido en Lima. Sin embargo, el intervalo de confianza obtenido no es útil ya que no es posible tener una proporción de votos fuera del rango de 0 a 1.
+
+### Caso Estudio 4: ¿Cuál es el intervalo de confianza de la diferencia de porcentajes de votos emitidos por Peru Libre y Fuerza Popular en todo el Perú?
+
+Trabajando con un nivel de confianza de 95%. Trabajando con 4002062 votos de muestra de 20000 mesas electorales.
+
+```{r echo=FALSE}
+n=20000
+DatosAbiertos_m<- sample_n(DatosAbiertos,n,replace=FALSE)
+
+```
+
+```{r echo=FALSE}
+V_Totales <- sum(na.omit(DatosAbiertos_m$votos_fp)) + sum(na.omit(DatosAbiertos_m$votos_pl))
+V_PL <- sum(na.omit(DatosAbiertos_m$votos_pl))
+V_FP <- sum(na.omit(DatosAbiertos_m$votos_fp))
+V_Totales
+# Ingrese las proporciónes muestrales
+p1<- sum(na.omit(DatosAbiertos_m$votos_pl))/V_Totales
+p2<- sum(na.omit(DatosAbiertos_m$votos_fp))/V_Totales
+
+# indica el tamaño de muestra
+n1<- 4002062
+n2<- 4002062
+
+# indica el nivel de confianza
+nc<-0.95
+print(paste("el tamaño de muestra 1 es:", n1))
+print(paste("el tamaño de muestra 2 es:", n2))
+print(paste("el nivel de confianza es:",nc))
+print(paste("la proporción muestral 1 es:", p1))
+print(paste("la proporción muestral 2 es:", p2))
+
+```
+
+```{r echo=FALSE}
+# Calcule el error estándar
+error_estandar <-  sqrt(p1*(1-p1)/n1 + p2*(1-p2)/n2)
+
+alpha = 1-nc
+z_crítico <- qnorm(1-alpha/2,0,1)
+margen_de_error <- z_crítico* error_estandar
+# Los extremo del intervalo de confianza de la media serán:
+extremo_inferior <- p1-p2 - margen_de_error
+extremo_superior <- p1-p2 + margen_de_error
+# Imprimir resultados:
+print(paste("significación:",alpha))
+print(paste("Error estándar:", error_estandar))
+print(paste("Z crítico:", z_crítico))
+print(paste("margen de error o Tolerancia:", margen_de_error))
+print(paste("IC: (",extremo_inferior,";", extremo_superior,")"))
+
+```
+
+Esto significa que el porcentaje de votos de Perú Libre son mayores que los de Fuerza Popular.
+
+Interpretación y predicciones: 
+
+Este estudio tiene como objetivo determinar el intervalo de confianza para la diferencia de en porcentajes de votos emitidos por Perú Libre y Fuerza Popular alrededor del Perú según las tablas electorales. El tamaño de la muestra es de 20 000 tablas y al nivel de confianza es del 95%
+
+El intervalo de confianza para la diferencia de proporciones se calcula mediante la formula p1-p2 ± z_critical * error_estándar, donde p1 y p2 son las proporciones de votos emitidos por Perú Libre y Fuerza Popular en todo el Perú, respectivamente, error_estándar es el error estándar de la diferencia de proporciones, y z_critical es el valor crítico de la distribución normal estándar.
+
+El intervalo de confianza resultante es (-0,052, -0,048). Esto significa que podemos tener un 95% de confianza en que la verdadera diferencia en los porcentajes de votos emitidos por Perú Libre y Fuerza Popular en todo el Perú se encuentra entre -0,052 y -0,048.
+
+
+
+# **VIII. Pruebas Paramétricas**
+### Caso Estudio 1:
+### Caso Estudio 2:
+### Caso Estudio 3:
+### Caso Estudio 4:
+# **IX. Pruebas No Paramétricas **
+### Caso Estudio 1:
+### Caso Estudio 2:
+### Caso Estudio 3:
+### Caso Estudio 4:
+# **X. Regresión Lineal**
+### Caso Estudio 1:
+### Caso Estudio 2:
+### Caso Estudio 3:
+### Caso Estudio 4:
+# **XI. Pruebas de Diseño **
+### Caso Estudio 1:
+### Caso Estudio 2:
+### Caso Estudio 3:
+### Caso Estudio 4:
+
+# **XII. Bibliografía**
+
+[1]. López-Lozano, R. B. (2022). Posibles explicaciones en torno al
+triunfo electoral de Pedro Castillo en las elecciones peruanas de 2021:
+un análisis desde la antropología política. FORUM. Revista Departamento
+Ciencia Política, 22, 222-240.
+<https://doi.org/10.15446/frdcp.n22.97450>
+
+[2]. Diálogo Político. (2021). Elecciones en Perú: terminan en
+polarización y fragmentación. Diálogo Político.
+<https://dialogopolitico.org/comunicacion/elecciones-en-peru-terminan-en-polarizacion-y-fragmentacion/>
+
+[3]. Jurado Nacional de Elecciones (JNE). (2021). Estadísticas del
+Padrón Electoral. Recuperado de
+<https://portal.jne.gob.pe/portal_documentos/files/ef964676-565d-4a52-a1a6-bd0db43b816e.pdf>
+
+[4]. Encinas, D., & Fuentes Diestra, A. (2021). La geografía política de
+las Elecciones Presidenciales de 2021 en Perú. Revista Elecciones,
+20(22), 231--282. <https://doi.org/10.53557/elecciones.2021.v20n22.07>
