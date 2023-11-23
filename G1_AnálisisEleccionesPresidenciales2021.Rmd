@@ -852,7 +852,7 @@ El intervalo de confianza resultante es (-0,052, -0,048). Esto significa que pod
 
 
 
-# **VIII. Pruebas Paramétricas**
+# **VIII. Pruebas de Hipótesis**
 ### Caso Estudio 1:
 ### Caso Estudio 2:
 ### Caso Estudio 3:
@@ -863,15 +863,10 @@ El intervalo de confianza resultante es (-0,052, -0,048). Esto significa que pod
 ### Caso Estudio 3:
 ### Caso Estudio 4:
 # **X. Regresión Lineal**
-### Caso Estudio 1:
-### Caso Estudio 2:
-### Caso Estudio 3:
-### Caso Estudio 4:
+### Análisis 1:
+### Análisis 2:
 # **XI. Pruebas de Diseño **
-### Caso Estudio 1:
-### Caso Estudio 2:
-### Caso Estudio 3:
-### Caso Estudio 4:
+### Caso Diseño de experimento: 
 
 # **XII. Bibliografía**
 
