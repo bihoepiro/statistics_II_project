@@ -894,6 +894,34 @@ El intervalo de confianza calculado tampoco incluye el valor de la diferencia me
 En resumen, con un valor p tan pequeño y un intervalo de confianza que no contiene la diferencia mediana hipotética, parece haber suficiente evidencia para rechazar la idea de que la diferencia mediana es de 25 votos.
 
 ### Caso Estudio 2:
+Se ha procedido a seleccionar exclusivamente los votos emitidos por el partido Perú Libre ('votos_pl') del conjunto de mesas electorales del Departamento de Lima, el cual proviene de un total de 22641 mesas electorales validadas al final del proceso. La pregunta que surge es si este conjunto de votos representa una muestra aleatoria de los votos emitidos por Perú Libre en el departamento de Lima. Se realizará un análisis con un nivel de confianza del 95% para evaluar esta afirmación. 
+
+```{r}
+library("randtests")
+# Filtrar los datos del Departamento de Lima con "ACTA ELECTORAL NORMAL" o "ACTA ELECTORAL RESUELTA"
+lima_data <- subset(DatosAbiertos, departamento == "LIMA" & 
+                      (estado_del_acta == "ACTA ELECTORAL NORMAL" | estado_del_acta == "ACTA ELECTORAL RESUELTA"))
+
+# Seleccionar solo los votos de Perú Libre
+votos_pl_lima <- lima_data$votos_pl
+runs.test(votos_pl_lima)
+```
+
+$$
+Ho:\text{Los datos son aleatorios}
+$$
+
+$$
+Ha: \text{Los datos no son aleatorios}
+$$
+
+Los resultados de la prueba de rachas ofrecen indicios sobre si los datos siguen un patrón aleatorio. En este caso:
+
+-La estadística de la prueba, que es -81.965, representa el valor observado a partir de los datos.
+-El número de rachas positivas (11332) y negativas (11309) refleja cómo se distribuyen las subidas y bajadas en la secuencia de los votos.
+-El p-valor extremadamente pequeño (p<2.2e−16) indica una fuerte evidencia en contra de la hipótesis nula de aleatoriedad.
+La interpretación de estos resultados sugiere que los votos emitidos por el partido Perú Libre en el Departamento de Lima no se distribuyen de manera aleatoria. Es decir, hay un patrón notable, probablemente una estructura o influencia particular, en la forma en que estos votos fueron registrados o emitidos en las mesas electorales seleccionadas.
+
 ### Caso Estudio 3:
 ### Caso Estudio 4:
 # **X. Regresión Lineal**
