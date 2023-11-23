@@ -859,6 +859,40 @@ El intervalo de confianza resultante es (-0,052, -0,048). Esto significa que pod
 ### Caso Estudio 4:
 # **IX. Pruebas No Paramétricas **
 ### Caso Estudio 1:
+
+Problema con prueba de signos:
+
+Durante las elecciones presidenciales de 2021 en Perú, se registraron los votos obtenidos por dos partidos políticos: Partido Fuerza Popular y Partido Perú Libre. Se sospecha que la diferencia mediana en la cantidad de votos obtenidos por mesa entre ambos partidos es igual a 25 votos. Se utilizará una muestra de estas mesas electorales para comprobar si esta sospecha es cierta.
+
+Datos:
+```{r}
+# Obtener la diferencia de votos por mesa entre FP y PL
+diferencia_votos <- DatosAbiertos$votos_fp - DatosAbiertos$votos_pl
+```
+
+Hipótesis:
+$$
+\begin{align*}
+& Ho: Me=25\\
+& Ha: Me \neq 25\\
+\end{align*}
+$$
+H0 (Hipótesis nula): La diferencia mediana en los votos entre Fuerza Popular (FP) y Perú Libre (PL) es igual a 25 votos.
+Ha (Hipótesis alternativa): La diferencia mediana en los votos entre Fuerza Popular (FP) y Perú Libre (PL) es distinta de 25 votos.
+Ha: DIFERENTE
+
+```{r echo=TRUE}
+# Prueba de Signos
+SIGN.test(diferencia_votos, md = 25, alternative = "two.sided", conf.level = 0.05)
+```
+
+
+El resultado indica que el valor p es muy pequeño (p-value < 2.2e-16), lo que significa que es extremadamente improbable obtener este resultado si la diferencia mediana fuera realmente igual a 25 votos. En otras palabras, hay una fuerte evidencia para rechazar la hipótesis nula de que la mediana de la diferencia de votos es igual a 25.
+
+El intervalo de confianza calculado tampoco incluye el valor de la diferencia mediana hipotética de 25, lo que respalda aún más la idea de que la diferencia mediana no es igual a ese valor.
+
+En resumen, con un valor p tan pequeño y un intervalo de confianza que no contiene la diferencia mediana hipotética, parece haber suficiente evidencia para rechazar la idea de que la diferencia mediana es de 25 votos.
+
 ### Caso Estudio 2:
 ### Caso Estudio 3:
 ### Caso Estudio 4:
