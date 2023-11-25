@@ -980,7 +980,51 @@ El valor de la estadística D (estadístico de Kolmogorov-Smirnov) indica el má
 Por lo tanto :
 1. "Hay evidencia suficiente para afirmar que las distribuciones en Lima difieren significativamente."
 2. "Hay evidencia suficiente para afirmar que las distribuciones en Arequipa difieren significativamente.
+
 ### Caso Estudio 4:
+Se recolectaron los datos de votos nulos por mesa de votación. Estos datos se obtuvieron de un conjunto representativo de mesas electorales en las cuales se registró el número de votos nulos.Se dispone de datos sobre la cantidad de votos nulos por mesa, agrupados en intervalos. Usando 5% de significancia se busca determinar si la distribución de votos nulos por mesa de votación se ajusta a una distribución binomial con ciertos parámetros.
+####Hipótesis:
+
+$$
+H_0:\text {La distribución de votos nulos por mesa de votación sigue una distribución binomial}
+$$
+
+$$
+H_1:\text { La distribución de votos nulos por mesa de votación NO sigue una distribución binomial.}
+$$
+Alfa: 0.05
+
+```{r}
+
+# Eliminar valores NA en la columna votos_nulos
+
+votos_nulos <- na.omit(DatosAbiertos_m$votos_nulos)
+intervalos <- cut(votos_nulos, breaks = c(0, 50, 100, 150, 200, 250, 300), include.lowest = TRUE)
+# Calcular la frecuencia de votos nulos por intervalo
+frecuencia_por_intervalo <- table(intervalos)
+
+# Cálculo de parámetros
+total_votos_nulos <- sum(votos_nulos)
+total_mesas_evaluadas <- sum(frecuencia_por_intervalo)
+n_estimado <- 19268
+
+# Estimación de p como proporción de votos nulos por mesa
+p_estimado <- total_votos_nulos / (total_mesas_evaluadas * n_estimado)
+
+# Realizar prueba de bondad de ajuste (Prueba Binomial)
+resultado_prueba <- binom.test(total_votos_nulos, total_mesas_evaluadas * n_estimado, p = p_estimado, alternative = "two.sided")
+
+# Mostrar resultados de la prueba
+print(resultado_prueba)
+```
+Número de éxitos registrados: 242,306 votos nulos.
+Número total de ensayos analizados: 371,255,824 mesas.
+p-valor:1 Refleja la probabilidad de obtener resultados al menos tan extremos como los observados
+La prueba no arrojó evidencia significativa para rechazar la hipótesis nula. Estos resultados sugieren que la probabilidad real de éxito (votos nulos) no difiere significativamente de la probabilidad inicialmente asumida (0.0006526659) bajo la distribución binomial.
+El intervalo de confianza del 95%, que oscila entre 0.0006500705 y 0.0006552690, indica que la probabilidad verdadera de éxito (votos nulos) probablemente se encuentra dentro de este rango.
+
+En resumen, no se encontró suficiente evidencia para rechazar la idea de que la distribución de votos nulos por mesa sigue una distribución binomial con la probabilidad estimada.
+
 # **X. Regresión Lineal**
 ### Análisis 1:
 ### Análisis 2:
