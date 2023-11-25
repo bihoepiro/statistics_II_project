@@ -923,6 +923,63 @@ Los resultados de la prueba de rachas ofrecen indicios sobre si los datos siguen
 La interpretación de estos resultados sugiere que los votos emitidos por el partido Perú Libre en el Departamento de Lima no se distribuyen de manera aleatoria. Es decir, hay un patrón notable, probablemente una estructura o influencia particular, en la forma en que estos votos fueron registrados o emitidos en las mesas electorales seleccionadas.
 
 ### Caso Estudio 3:
+Comparación de distribución de votos entre departamentos usando la Prueba de Kolmogorov-Smirnov
+
+Existe una diferencia significativa en la distribución de votos entre Fuerza Popular y Perú Libre en los departamentos de Lima y Arequipa. Con 5% ¿puede afirmarse que los datos provienen de una distribución normal?
+####Hipótesis:
+$$
+Ho: \text{Las muestras de datos provienen de la misma distribución subyacente}
+$$
+
+$$
+Ha: \text{ Existe una diferencia significativa entre las muestras de datos, lo que indica que no provienen de la misma distribución subyacente.}
+$$
+```{r}
+# Supongamos que tenemos los datos de votos de Fuerza Popular y Perú Libre en dos columnas separadas para Lima y Arequipa en un dataframe llamado "DatosElecciones"
+
+# Paso 1: Cargar los datos y dividirlos por departamento y partido
+
+lima_data <- subset(DatosAbiertos, departamento == "LIMA" & 
+                      (estado_del_acta == "ACTA ELECTORAL NORMAL" | estado_del_acta == "ACTA ELECTORAL RESUELTA"))
+
+arequipa_data <- subset(DatosAbiertos, departamento == "AREQUIPA" & 
+                      (estado_del_acta == "ACTA ELECTORAL NORMAL" | estado_del_acta == "ACTA ELECTORAL RESUELTA"))
+
+#
+votos_fp_lima <- lima_data$votos_fp
+votos_pl_lima <- lima_data$votos_pl
+
+votos_fp_arequipa <- arequipa_data$votos_fp
+votos_pl_arequipa <- arequipa_data$votos_pl
+
+# Paso 3: Realizar el test de Kolmogorov-Smirnov para cada ubicación y partido
+resultado_lima_fp_pl <- ks.test(votos_fp_lima, votos_pl_lima, alternative = "two.sided")
+resultado_arequipa_fp_pl <- ks.test(votos_fp_arequipa, votos_pl_arequipa, alternative = "two.sided")
+
+
+# Paso 4: Interpretar los resultados
+print("Resultados para Lima (Fuerza Popular vs. Perú Libre):")
+print(resultado_lima_fp_pl)
+if (resultado_lima_fp_pl$p.value < 0.05) {
+  print("Hay evidencia suficiente para afirmar que las distribuciones en Lima difieren significativamente.")
+} else {
+  print("No hay suficiente evidencia para afirmar que las distribuciones en Lima difieren significativamente.")
+}
+
+print("Resultados para Arequipa (Fuerza Popular vs. Perú Libre):")
+print(resultado_arequipa_fp_pl)
+if (resultado_arequipa_fp_pl$p.value < 0.05) {
+  print("Hay evidencia suficiente para afirmar que las distribuciones en Arequipa difieren significativamente.")
+} else {
+  print("No hay suficiente evidencia para afirmar que las distribuciones en Arequipa difieren significativamente.")
+}
+```
+Para ambas ubicaciones (Lima y Arequipa), el valor p es extremadamente pequeño (menor que el nivel de significancia estándar de 0.05, indicado como < 2.2e-16. Esto sugiere una diferencia significativa entre las distribuciones de votos de Fuerza Popular y Perú Libre en ambas ubicaciones.
+
+El valor de la estadística D (estadístico de Kolmogorov-Smirnov) indica el máximo desacuerdo entre las dos funciones de distribución acumulativa empírica. Cuanto mayor sea el valor de D, mayor será la discrepancia entre las distribuciones. En este caso, tanto en Lima como en Arequipa, los valores de D son significativamente diferentes de cero. 
+Por lo tanto :
+1. "Hay evidencia suficiente para afirmar que las distribuciones en Lima difieren significativamente."
+2. "Hay evidencia suficiente para afirmar que las distribuciones en Arequipa difieren significativamente.
 ### Caso Estudio 4:
 # **X. Regresión Lineal**
 ### Análisis 1:
