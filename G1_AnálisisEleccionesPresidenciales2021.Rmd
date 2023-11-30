@@ -1025,9 +1025,424 @@ El intervalo de confianza del 95%, que oscila entre 0.0006500705 y 0.0006552690,
 
 En resumen, no se encontró suficiente evidencia para rechazar la idea de que la distribución de votos nulos por mesa sigue una distribución binomial con la probabilidad estimada.
 
-# **X. Regresión Lineal**
-### Análisis 1:
-### Análisis 2:
+
+# **X. Rgeresión Lineal**
+
+### Caso 1: El resultado de los votos de cada partido en primera vuelta depende del dinero invertido por cada uno de estos durante la campaña electoral.
+
+##### Datos ordenados
+
+```{r echo=FALSE}
+Financiamiento <- Financiamiento %>%
+  mutate_all(~ ifelse(. == "-", 0, .))
+
+Financiamiento$ANEXO.5A <- as.numeric(Financiamiento$ANEXO.5A)
+Financiamiento$ANEXO.5B <- as.numeric(Financiamiento$ANEXO.5B)
+Financiamiento$ANEXO.5C <- as.numeric(Financiamiento$ANEXO.5C)
+Financiamiento$ANEXO.5D <- as.numeric(Financiamiento$ANEXO.5D)
+Financiamiento$ANEXO.6A <- as.numeric(Financiamiento$ANEXO.6A)
+Financiamiento$ANEXO.6B <- as.numeric(Financiamiento$ANEXO.6B)
+Financiamiento$ANEXO.6C <- as.numeric(Financiamiento$ANEXO.6C)
+
+Financiamiento <- Financiamiento %>%
+  mutate(NuevaColumna = ANEXO.5A + ANEXO.5B + ANEXO.5C + ANEXO.5D)
+
+```
+
+```{r}
+Financiamiento_Ordenado <- Financiamiento %>%
+  arrange(OP)
+filas_a_eliminar <- c(1,6,7,10,14,17)
+Financiamiento_Ordenado_sin_filas <- Financiamiento_Ordenado[-filas_a_eliminar, ]
+```
+
+```{r}
+Formula_Ordenado <- Formula %>%
+  arrange(Tipo.de.votos)
+filas_a_eliminar <- c(1,17,18,21,22,23,13)
+Formula_Ordenado_sin_filas <- Formula_Ordenado[-filas_a_eliminar, ]
+```
+
+```{r}
+Financiamiento_total_n <- c(Financiamiento_Ordenado_sin_filas$NuevaColumna)
+Financiamiento_total_n
+```
+
+```{r}
+Formula_total_n <- c(Formula_Ordenado_sin_filas$Votos)
+Formula_total_n
+```
+
+##### Solución
+###### Diagrama de dispersión
+```{r}
+plot(Financiamiento_total_n, Formula_total_n)
+```
+
+###### Covarianza
+```{r}
+cov(Financiamiento_total_n, Formula_total_n)
+```
+Covarianza (Financiamiento, Formula) >0 ==> existe una tendencia creciente de izquierda a derecha.
+
+###### Correlación
+```{r}
+cor(Financiamiento_total_n, Formula_total_n)
+```
+Como r= 0.173609 < 0.75 entonces la relación lineal es mala.
+
+#### HALLEMOS LA ECUACIÓN DE REGRESIÓN
+
+1°) Transformamos los datos de los vectores, a un data frame.
+
+```{r}
+datosreg<-data.frame("X1"=Financiamiento_total_n,"Y1"=Formula_total_n)
+```
+
+
+2°) Ahora hallamos el reporte de regresión, usando lm (linear models)
+
+```{r}
+resultados<- lm(datosreg$Y1 ~ datosreg$X1)   # primero debe ir Y1 y luego X1 
+resultados
+
+summary(resultados)
+```
+
+Obteniendo información del reporte anterior.
+
+$$
+\beta_{0}=7.173e+05    \text{   y también  } \beta_{1}=1.768e-01
+$$
+
+pendiente>0 ==> la recta sube de izquierda a derecha.
+
+Modelo:
+
+$$
+\hat{y}=(7.173e+05)+(1.768e-01)x
+$$
+
+$$
+y=(7.173e+05)+(1.768e-01)x+e
+$$
+
+#### INTERPRETACIONES:
+
+$$
+\beta_{1}=b \rightarrow \text{Por cada unidad de aumento en x, la variable y varía en promedio en b unidades}
+$$
+Si b>0 ==> Varía: aumenta
+
+En el ejemplo:
+
+x=Financiamiento de cada partido
+
+y=Votos electorales para cada partido.
+
+Beta_0=7.173e+05 ==> Si la casona no tuviera finaciamiento, se empieza con 7.173e+05 soles.
+
+Beta_1= 1.768e-01 ==> Los votos aumentarán en promedio en 1.768e-01.
+
+3°) Graficamos el diagrama de dispersión y la recta de regresión:
+
+```{r}
+plot(datosreg$X1,datosreg$Y1,xlab="X1",ylab="Y1") # primero X, luego Y
+abline(resultados)
+```
+
+4°) Errores
+```{r}
+ye<- (7.173e+05)+(1.768e-01)*x # Y estimados (lo que se calcula con la ecuación de regresión obtenida)
+
+print(paste("Valores estimados  de y "))
+ye
+
+ei<- y-ye # errores = Y real - Y estimado
+
+print(paste("errores con las estimaciones"))
+
+ei
+```
+
+#### Análisis de errores
+
+Para las siguientes pruebas tomamos alfa=0.05
+
+1) Analizando la independencia de los residuos
+
+```{r}
+install.packages("lmtest")
+```
+
+luego:
+
+```{r}
+library(lmtest)
+```
+
+##### Test de Durwin Watson para probar la independencia de los errores:
+
+$$
+Ho: \text{Los errores son independientes}
+$$
+
+$$
+Ha: \text{Los errores no son independientes}
+$$
+
+```{r}
+dwtest(resultados,alternative ="two.sided",iterations = 1000)
+```
+
+En general : siempre que DW esté entre 1.5 y 2.5 se aceptará Ho.
+
+Como el estadístico DW=2.5 está *entre 1.5 y 2.5* se acepta Ho , es decir, los errores son independientes.
+
+También: P-valor= 0.2322 > alfa=0.05 ==> Acepto Ho: son independientes.
+
+2) Analizando la normalidad de los residuos:
+
+##### Test de Kolmogorov Smirnov para probar la normalidad de los errores:
+
+$$
+Ho: \text{Los errores tienen distribución normal, con media CERO}
+$$
+
+$$
+Ha: \text{Los errores no tienen distribución normal, con media CERO}
+$$
+```{r}
+ks.test(ei,mean(ei),sd(ei))
+```
+
+P-valor=1 >alfa=0.05 ==>> Acepto Ho ==> "Los errores son normales con media CERO".
+
+3) Analizando la homostecidad de los residuos:
+
+##### Test de Breusch–Pagan para probar la homostecidad de los errores:
+
+$$
+Ho: \text{La varianza de los errores es constante  (homocedasticidad)}
+$$
+
+$$
+Ha: \text{La varianza de los errores no es constante  (heterocedasticidad)}
+$$
+
+```{r}
+bptest(lm(Y1~X1))
+```
+como p valor es mayor que ALFA= 0.05 ==> no rechazo Ho: Acepto Ho ==> si hay homocedasticidad (las varianzas son iguales).
+
+
+### Caso 2: El resultado de los votos de cada partido en primera vuelta depende del dinero gastado por cada uno de estos durante la campaña electoral.
+
+##### Datos ordenados
+
+```{r echo=FALSE}
+Financiamiento <- Financiamiento %>%
+  mutate_all(~ ifelse(. == "-", 0, .))
+
+Financiamiento$ANEXO.5A <- as.numeric(Financiamiento$ANEXO.5A)
+Financiamiento$ANEXO.5B <- as.numeric(Financiamiento$ANEXO.5B)
+Financiamiento$ANEXO.5C <- as.numeric(Financiamiento$ANEXO.5C)
+Financiamiento$ANEXO.5D <- as.numeric(Financiamiento$ANEXO.5D)
+Financiamiento$ANEXO.6A <- as.numeric(Financiamiento$ANEXO.6A)
+Financiamiento$ANEXO.6B <- as.numeric(Financiamiento$ANEXO.6B)
+Financiamiento$ANEXO.6C <- as.numeric(Financiamiento$ANEXO.6C)
+
+Financiamiento <- Financiamiento %>%
+  mutate(NuevaColumna = ANEXO.6A + ANEXO.6B + ANEXO.6C)
+
+```
+
+```{r}
+Financiamiento_Ordenado <- Financiamiento %>%
+  arrange(OP)
+filas_a_eliminar <- c(1,6,7,10,14,17)
+Financiamiento_Ordenado_sin_filas <- Financiamiento_Ordenado[-filas_a_eliminar, ]
+```
+
+```{r}
+Formula_Ordenado <- Formula %>%
+  arrange(Tipo.de.votos)
+filas_a_eliminar <- c(1,17,18,21,22,23,13)
+Formula_Ordenado_sin_filas <- Formula_Ordenado[-filas_a_eliminar, ]
+```
+
+```{r}
+Financiamiento_total_n <- c(Financiamiento_Ordenado_sin_filas$NuevaColumna)
+Financiamiento_total_n
+```
+
+```{r}
+Formula_total_n <- c(Formula_Ordenado_sin_filas$Votos)
+Formula_total_n
+```
+
+##### Solución
+###### Diagrama de dispersión
+```{r}
+plot(Financiamiento_total_n, Formula_total_n)
+```
+
+###### Covarianza
+```{r}
+cov(Financiamiento_total_n, Formula_total_n)
+```
+Covarianza (Financiamiento, Formula) >0 ==> existe una tendencia creciente de izquierda a derecha.
+
+###### Correlación
+```{r}
+cor(Financiamiento_total_n, Formula_total_n)
+```
+Como r= 0.2194616 < 0.75 entonces la relación lineal es mala.
+
+#### HALLEMOS LA ECUACIÓN DE REGRESIÓN
+
+1°) Transformamos los datos de los vectores, a un data frame.
+
+```{r}
+datosreg<-data.frame("X1"=Financiamiento_total_n,"Y1"=Formula_total_n)
+```
+
+
+2°) Ahora hallamos el reporte de regresión, usando lm (linear models)
+
+```{r}
+resultados<- lm(datosreg$Y1 ~ datosreg$X1)   # primero debe ir Y1 y luego X1 
+resultados
+
+summary(resultados)
+```
+
+Obteniendo información del reporte anterior.
+
+$$
+\beta_{0}=6.897e+05    \text{   y también  } \beta_{1}=2.209e-01  
+$$
+
+pendiente>0 ==> la recta sube de izquierda a derecha.
+
+Modelo:
+
+$$
+\hat{y}=(6.897e+05)+(2.209e-01)x
+$$
+
+$$
+y=(6.897e+05)+(2.209e-01)x+e
+$$
+
+#### INTERPRETACIONES:
+
+$$
+\beta_{1}=b \rightarrow \text{Por cada unidad de aumento en x, la variable y varía en promedio en b unidades}
+$$
+Si b>0 ==> Varía: aumenta
+
+En el ejemplo:
+
+x=Financiamiento de cada partido
+
+y=Votos electorales para cada partido.
+
+Beta_0=6.897e+05==> Si la casona no tuviera finaciamiento, se empieza con 6.897e+05 soles.
+
+Beta_1= 2.209e-01 ==> Los votos aumentarán en promedio en 2.209e-01.
+
+3°) Graficamos el diagrama de dispersión y la recta de regresión:
+
+```{r}
+plot(datosreg$X1,datosreg$Y1,xlab="X1",ylab="Y1") # primero X, luego Y
+abline(resultados)
+```
+
+4°) Errores
+```{r}
+ye<- (6.897e+05)+(2.209e-01)*x # Y estimados (lo que se calcula con la ecuación de regresión obtenida)
+
+print(paste("Valores estimados  de y "))
+ye
+
+ei<- y-ye # errores = Y real - Y estimado
+
+print(paste("errores con las estimaciones"))
+
+ei
+```
+
+#### Análisis de errores
+
+Para las siguientes pruebas tomamos alfa=0.05
+
+1) Analizando la independencia de los residuos
+
+```{r}
+install.packages("lmtest")
+```
+
+luego:
+
+```{r}
+library(lmtest)
+```
+
+##### Test de Durwin Watson para probar la independencia de los errores:
+
+$$
+Ho: \text{Los errores son independientes}
+$$
+
+$$
+Ha: \text{Los errores no son independientes}
+$$
+
+```{r}
+dwtest(resultados,alternative ="two.sided",iterations = 1000) 
+```
+
+En general : siempre que DW esté entre 1.5 y 2.5 se aceptará Ho.
+
+Como el estadístico DW=2.5 está *entre 1.5 y 2.5* se acepta Ho , es decir, los errores son independientes.
+
+También: P-valor= 0.2702 > alfa=0.05 ==> Acepto Ho: son independientes.
+
+2) Analizando la normalidad de los residuos:
+
+##### Test de Kolmogorov Smirnov para probar la normalidad de los errores:
+
+$$
+Ho: \text{Los errores tienen distribución normal, con media CERO}
+$$
+
+$$
+Ha: \text{Los errores no tienen distribución normal, con media CERO}
+$$
+
+```{r}
+ks.test(ei,mean(ei),sd(ei)) 
+```
+
+P-valor=1 >alfa=0.05 ==>> Acepto Ho ==> "Los errores son normales con media CERO".
+
+3) Analizando la homostecidad de los residuos:
+
+##### Test de Breusch–Pagan para probar la homostecidad de los errores:
+
+$$
+Ho: \text{La varianza de los errores es constante  (homocedasticidad)}
+$$
+
+$$
+Ha: \text{La varianza de los errores no es constante  (heterocedasticidad)}
+$$
+
+```{r}
+bptest(lm(Y1~X1))
+```
+como p valor es mayor que ALFA= 0.05 ==> no rechazo Ho: Acepto Ho ==> si hay homocedasticidad (las varianzas son iguales).
 # **XI. Pruebas de Diseño **
 ### Caso Diseño de experimento: 
 
