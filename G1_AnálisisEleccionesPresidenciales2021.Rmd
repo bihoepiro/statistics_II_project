@@ -854,6 +854,64 @@ El intervalo de confianza resultante es (-0,052, -0,048). Esto significa que pod
 
 # **VIII. Pruebas de Hipótesis**
 ### Caso Estudio 1:
+Ciertos medios de comunicación afirman que menos del 40% de los votos en las mesas de la segunda vuelta en Lima fueron para Perú Libre.
+Si la afirmación es correcta no se procederá a reportar un caso de desinformación, caso contrario se reportará. 
+Teniendo como muestra 1000 mesas.
+Usando un nivel de significancia del 5% ¿Qué decisión se debe tomar?
+
+```{r}
+M_C_L <- DatosAbiertos %>% filter(departamento == "LIMA")
+muestras_aleatorias <- M_C_L %>% 
+  sample_n(1000, replace = FALSE)
+muestras_aleatorias
+```
+
+```{r}
+total <- sum(muestras_aleatorias$total_votantes, na.rm = TRUE)
+votos_pl1 <- sum(muestras_aleatorias$votos_pl, na.rm = TRUE)
+
+pi= votos_pl1/total
+```
+
+Hipótesis:
+$$  H_{o}:\pi_\text{votos_pl} \ge 0.40 $$
+$$ H_{a}:\pi_\text{votos_pl} < 0.40\\  $$
+Nivel de significación:
+
+$$ \alpha =0.05 $$
+
+Estadístico de prueba:
+
+$$ Z_{o}=\frac{p-\pi_{o}}{\sqrt{\frac{\pi_{o}(1-\pi_{o})}{n}}} $$
+
+```{r}
+pi
+PIo<- 0.40    # El valo de PI, que está en Ho.
+Zo<-(pi - PIo )/sqrt(PIo*(1-PIo)/total)
+
+print(paste("el estadístico de prueba  es",Zo))
+```
+Región crítica:
+
+$$\text{Dado que es una prueba de cola izquierda,  la región sombreada estará en el lado izquierdo de la gráfica y su área es } \alpha$$ 
+
+Valor crítico: 
+es el número que está en el borde de la región sombreada y siempre se calcula con el área total que hay hacia su izquierda.
+
+```{r}
+alfa<-0.05
+VC<-qnorm(alfa,0,1) 
+print(paste("el valor crítico es", VC)) 
+```
+
+
+Decisión:
+
+$$ \text{Como el Zo está en la región sombreada, se rechaza Ho. } $$
+
+Conclusión:
+
+$$ \text{Se tendrá que reportar casos de desinformación en todos los medios de comunicación que afirmen que los votos por Perú Libre fueron menor a 40% en las mesas de Lima en la segunda vuelta.} $$
 ### Caso Estudio 2:
 ### Caso Estudio 3:
 ### Caso Estudio 4:
