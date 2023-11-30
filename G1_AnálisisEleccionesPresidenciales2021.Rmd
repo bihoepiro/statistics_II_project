@@ -1443,8 +1443,193 @@ $$
 bptest(lm(Y1~X1))
 ```
 como p valor es mayor que ALFA= 0.05 ==> no rechazo Ho: Acepto Ho ==> si hay homocedasticidad (las varianzas son iguales).
+
 # **XI. Pruebas de Diseño **
-### Caso Diseño de experimento: 
+
+
+
+### Caso Estudio:
+Se plantea un experimento con la finalidad de comparar las preferencias de la población por ideología en las candidaturas.
+Variable de entrada: votos por acta con la opción de elegir entre distintas candidaturas ligadas a una ideología
+Factor: Candidatura política
+Tratamiento: cada tipo de ideología 
+Unidad experimental: personas hábiles electorales 2021
+Variable respuesta: comprensión en la dinámica política en el Perú
+Error experimental:
+
+```{r}
+CIN=sample(DatosAbiertos$primera_vuelta_accion_popular,size=600,replace=T)
+Data_p2<- data.frame(
+CIN=sample(DatosAbiertos$primera_vuelta_accion_popular,size=600,replace=T),
+DN=sample(DatosAbiertos$primera_vuelta_app,600,T)+sample(DatosAbiertos$primera_vuelta_fuerza_popular,600,T)+sample(DatosAbiertos$primera_vuelta_renacimiento,600,T)+sample(DatosAbiertos$primera_vuelta_renovacion_popular,600,T),
+DG=sample(DatosAbiertos$primera_vuelta_avanza_pais,600,T),
+IN=sample(DatosAbiertos$primera_vuelta_democracia_directa,600,T)+sample(DatosAbiertos$primera_vuelta_frente_amplio,600,T)+sample(DatosAbiertos$primera_vuelta_jpp,600,T)+sample(DatosAbiertos$primera_vuelta_partido_nacionalista,600,T)+sample(DatosAbiertos$primera_vuelta_peru_libre,600,T)+sample(DatosAbiertos$primera_vuelta_upp,600,T),
+CDG=sample(DatosAbiertos$primera_vuelta_partido_morado,600,T)+sample(DatosAbiertos$primera_vuelta_ppc,600,T)+sample(DatosAbiertos$primera_vuelta_pps,600,T)+sample(DatosAbiertos$primera_vuelta_victoria_nacional,600,T)+sample(DatosAbiertos$primera_vuelta_somos,600,T),
+CDN=sample(DatosAbiertos$primera_vuelta_podemos_peru,600,T)
+)
+head(Data_p2,10)
+```
+```{r}
+boxplot(Data_p2)
+```
+Se observa en el gráfico que la izquierda nacionalista como ideología tiene mayor recibimiento en la población peruana.
+
+```{r}
+SDF3<-stack(Data_p2)
+Anova <- aov(values~ind, data=SDF3) 
+Anova
+summary(Anova) 
+```
+
+
+| FUENTE       | GL         | SC           | CM          | FO       | P VALOR |
+|--------------|------------|--------------|-------------|----------|---------|
+| TRATAMIENTOS | k-1=5      | SCTr=1093184 | CMTr=218637 | Fo=569.6 | P=2e-16 |
+| ERROR        | N-k=3694   | SCE=1379457  | CME=384     |          |         |
+| TOTAL        | N-1=3699   | SCT=2472641  |             |          |         |
+
+$$P_{valor}= P(F_{(k-1,N-k)}\>Fo)$$
+
+```{r}
+pf(569.6,5,3699,lower.tail = F)
+```
+$Ho: \mu1= \mu2 = \mu3$
+
+$Ha: \text{Existe algun}\ \mu\ \text{distinto de otros.}$
+
+Notar que el p valor se obtiene asI:
+
+$$Pvalor= P(F(5,3699) > 65983)=  2e-16< \alpha = 0.05$$
+
+$$==> Rechazo\ Ho ==> Tomo\ Ha: \text{Existe alguna media distinta de otras.}$$
+
+
+**DETERMINANDO CUAL ES EL PROMEDIO DISTINTO:**
+
+## Test de Tukey para comparaciones múltiples
+
+Para realizar un ***test de Tukey HSD*** (Honest Significant Differences)
+
+```{r echo=TRUE}
+TukeyHSD(Anova, conf.level=0.95) 
+# Anova es la tabla de ANOVA que se halló arriba. Con confianza 0.95 
+```
+
+Reconocemos:
+mu1 = CIN
+mu2 = DN
+mu3 = DG
+mu4 = IN
+mu5 = CDG
+mu6 = CDN
+Se ha hallado intervalos de confianza para la diferencia de 2 mu.
+
++37.5717 \< mu2 - mu1 \< + 38.1804 ==\> (-) \< mu2 - mu 1 \< (+) ==\> mu2 \> mu1
+
++3.3770 \< mu3 - mu1 \< + 3.9857 ==\> (+) \< mu3 - mu1 \< (+) ==\> mu3\> mu1
+
++36.6781 \< mu4 - mu1 \< + 36.9824 ==\> (+)\< mu3 - mu2 \< (+) ==\> mu4 \> mu1
+
++3.9514 \< mu5 - mu1 \< + 4.5601 ==\> (-) \< mu2 - mu 1 \< (+) ==\>  mu5 \> mu1
+
+-6.5385 \< mu6 - mu1 \< - 5.9298 ==\> (+) \< mu3 - mu1 \< (+) ==\> mu6\< mu1
+
+-34.4990 \< mu3 - mu2 \< + -33.8904 ==\> (+)\< mu3 - mu2 \< (+) ==\> mu3 \< mu2
+
+-1.5022 \< mu4 - mu2 \< -0.8936 ==\> (-) \< mu2 - mu 1 \< (+) ==\>  mu4 \< mu2
+
+-33.9246 \< mu5 - mu2 \< -33.3159 ==\> (+) \< mu3 - mu1 \< (+) ==\> mu5\< mu2
+
+-44.4146 \< mu6 - mu2 \< -43.8059 ==\> (+)\< mu3 - mu2 \< (+) ==\> mu6 \< mu2
+
++32.6924 \< mu4 - mu3 \<+ 33.3011 ==\> (-) \< mu2 - mu 1 \< (+) ==\> mu4 \> mu3
+
++0.2701 \< mu5 - mu3 \< + 0.8787 ==\> (+) \< mu3 - mu1 \< (+) ==\> mu5\> mu3
+
+-10.2198 \< mu6 - mu3 \< -9.6112 ==\> (+)\< mu3 - mu2 \< (+) ==\> mu6 \< mu3
+
+-32.7267 \< mu5 - mu4 \<-32.1180 ==\> (-) \< mu2 - mu 1 \< (+) ==\> mu5 \< mu4
+
+-43.2166 \< mu6 - mu4 \< -42.6080 ==\> (+) \< mu3 - mu1 \< (+) ==\> mu6\< mu4
+
+-10.7943 \< mu6 - mu5 \< - 10.1856 ==\> (+)\< mu3 - mu2 \< (+) ==\> mu6 \< mu5
+
+
+Conclusión:
+
+mu6<mu1<mu3<mu5<mu4<mu2
+Se concluye que ninguno de los mu son iguales, 
+
+p adj= P valor ajustado ==\> como pvalor= 0.0000 \< alfa=0.05 ==\> rechazo Ho:  mu2 \> mu1
+
+p adj=P valor ajustado ==\> Como p valor = 0.0817 \> alfa = 0.05 ==\> Acepto Ho: mu3\> mu1
+
+p adj= P valor ajustado ==\> como p valor = 0.0000 \< alfa = 0.05 ==\> Rechazo Ho: mu4 \> mu1
+
+p adj= P valor ajustado ==\> como pvalor= 0.0326 \< alfa=0.05 ==\> Rechazo Ho: mu5 \> mu1
+
+p adj=P valor ajustado ==\> Como p valor = 0.0000 \< alfa = 0.05 ==\> Rechazo Ho: mu6\< mu1
+
+p adj= P valor ajustado ==\> como p valor = 0.0000 \< alfa = 0.05 ==\> Rechazo Ho: mu3 \< mu2
+
+p adj= P valor ajustado ==\> como pvalor= 0.1103 \> alfa=0.05 ==\> acepto Ho: mu4 \< mu2
+
+p adj=P valor ajustado ==\> Como p valor = 0.0000 \< alfa = 0.05 ==\> Rechazo Ho: mu5\< mu2
+
+p adj= P valor ajustado ==\> como p valor = 0.0000 \< alfa = 0.05 ==\> Rechazo Ho: mu6 \< mu2
+
+p adj= P valor ajustado ==\> como pvalor= 0.0000 \< alfa=0.05 ==\> acepto Ho: mu4 \> mu3
+
+p adj=P valor ajustado ==\> Como p valor = 0.9995 \> alfa = 0.05 ==\> Acepto Ho: mu5\> mu3
+
+p adj= P valor ajustado ==\> como pvalor= 0.0000 \> alfa=0.05 ==\> Rechazo Ho: mu6 \< mu3
+
+p adj= P valor ajustado ==\> como pvalor= 0.0000 \> alfa=0.05 ==\> Rechazo Ho: mu5 \< mu4
+
+p adj= P valor ajustado ==\> como pvalor= 0.0000 \> alfa=0.05 ==\> Rechazo Ho: mu6\< mu4
+
+p adj= P valor ajustado ==\> como pvalor= 0.0000 \> alfa=0.05 ==\> Rechazo Ho: mu6 \< mu5
+
+En forma gráfica:
+
+## ¿Cómo podemos visualizar estos resultados?
+
+```{r echo=TRUE}
+plot(TukeyHSD(Anova, conf.level=0.95), las=2) # Anova es el nombre de la tabla de ANOVA que se hallo mas arriba
+```
+# SUPUESTOS DE ANOVA:
+
+Modelo analizado es:
+
+$$
+y_{ij}=\mu_{i}+\tau_{i}+\epsilon_{i}
+$$
+
+Los errores $\epsilon$ deben satisfacer las siguientes condiciones:
+
+1\) Generar iguales varianzas para cada tratamiento.
+
+2\) Deben ser normales con media cero.
+
+## 1) Para poner a prueba la suposición de la igualdad de varianzas
+
+El **Test de Levine para poner a prueba igualdad de varianzas** para dos poblaciones puede extenderse a $k$ poblaciones, realizando un análisis de varianza para las $k$ muestras
+
+$$ Z_{ij}=\left|X_{ij}-\widetilde{X}_{i}\right| \text{ para } j=1,\cdots,n_{i} \quad i=1,2,\cdots, k $$
+
+en donde $\widetilde{X}_{i}$ es la mediana del $i$-ésimo grupo (Test de Brown-Forsythe) o es la media del $i$-ésimo grupo (Test de Levine).
+
+Recuerden que estaríamos poniendo a prueba **las hipótesis**
+
+$$ H_{0}: \sigma_{1}=\sigma_{2}= \cdots=\sigma_{k}\\ H_{a}: \text{ al menos una varianza difiere de las demás}\\ $$
+
+## Test de Levine
+
+$$ \begin{align*} & N= \text{ número total de observaciones}\\ & k= \text{ número de grupos a comparar}\\ & n_{i}= \text{ número de observaciones en el grupo }i\\ & X_{ij}= \text{ el valor de la variable medida  para el j-ésimo caso del i-ésimo grupo}\\ & Z_{ij}=\left|X_{ij}-\widetilde{X}_{i}\right| \text{ para } j=1,\cdots,n_{i} \quad i=1,2,\cdots, r \end{align*} $$
+
+## Estadístico de prueba del Test de Levine
+
+$$ \begin{align*} & Z_{ij}=\left|X_{ij}-\widetilde{X}_{i}\right| \text{ para } j=1,\cdots,n_{i} \quad i=1,2,\cdots, r\\ & Z_{..}=\frac{1}{n}\sum_{i=1}^{r}\sum_{j=1}^{n_{i}}Z_{ij}\\ & Z_{i.}=\frac{1}{n_{i}}\sum_{j=1}^{n_{i}}Z_{ij}\\ & \text{ Y el estadístico de prueba viene dado por }\\ & W= \frac{(n-r)\sum_{i=1}^{r}n_{i}(Z_{i.}-Z_{..})}{(r-1)\sum_{i=1}^{r}\sum_{i=1}^{r}\sum_{j=1}^{n_{i}}\left(Z_{ij}-Z_{i.}\right)} \end{align*} 
 
 # **XII. Bibliografía**
 
